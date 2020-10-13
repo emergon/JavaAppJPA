@@ -1,6 +1,7 @@
 package emergon;
 
 import emergon.entity.Customer;
+import emergon.entity.Product;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -20,9 +21,46 @@ public class MainClass {
 //        int ccode = 100102;//Alexiadis
 //        getCustomerById(ccode);
 //        printCustomers();
-
+/*
+        create product
+        Product p = new Product("Chair", 35);
+        createProduct(p);
+         */
+ /*
+        Update customer
+        Customer c = getCustomerById(100102);
+        System.out.println("Customer before update: "+ c);
+        c.setCname("Alexiou");//Update customer
+        updateCustomer(c);
+        System.out.println("Customer after update: "+c);
+         */
         closeEmf();
 
+    }
+
+    private static void deleteProduct(Product p) {
+        openEntityManager();
+        em.getTransaction().begin();
+        em.remove(p);
+        em.getTransaction().commit();
+        closeEntityManager();
+    }
+
+    private static void createProduct(Product p) {
+        openEntityManager();
+        em.getTransaction().begin();
+        em.persist(p);//Add product
+        em.getTransaction().commit();
+        closeEntityManager();
+    }
+
+    private static Customer updateCustomer(Customer c) {
+        openEntityManager();
+        em.getTransaction().begin();
+        c = em.merge(c);//like update
+        em.getTransaction().commit();//Send the query to the Database
+        closeEntityManager();
+        return c;
     }
 
     private static void printCustomers() {

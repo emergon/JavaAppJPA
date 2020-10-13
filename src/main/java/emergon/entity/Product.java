@@ -31,6 +31,11 @@ public class Product implements Serializable {
     public Product() {
     }
 
+    public Product(String pdescr, double pprice) {
+        this.pdescr = pdescr;
+        this.pprice = pprice;
+    }
+
     @Override
     public String toString() {
         return "Product{" + "pcode=" + pcode + ", pdescr=" + pdescr + ", pprice=" + pprice + '}';
