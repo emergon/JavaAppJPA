@@ -6,31 +6,43 @@
 package emergon.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 
-/**
- *
- * @author user
- */
+@NamedQueries(value = {
+    @NamedQuery(name = "Salesman.findByName", query = "SELECT s FROM Salesman s WHERE s.sname = :onoma"),
+    @NamedQuery(name = "Salesman.findSalesmanByNameWithFamily", query = "SELECT s FROM Salesman s JOIN FETCH s.members m WHERE s.sname = :onoma")
+})
 @Entity
 public class Salesman implements Serializable {
+
     @Id//Primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int scode;
     private String sname;
     private String scity;
     private double scomm;
-    @OneToMany(mappedBy = "salesman")//JPA look at the field salesman to find out how to map the tables.
+    @OneToMany(mappedBy = "salesman", cascade = CascadeType.ALL)//JPA look at the field salesman to find out how to map the tables.
     private List<Family> members;
-    @OneToMany(mappedBy = "salesman")
+    @OneToMany(mappedBy = "salesman", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Sales> sales;
-    
+
     public Salesman() {
+    }
+
+    public Salesman(String sname, String scity, double scomm) {
+        this.sname = sname;
+        this.scity = scity;
+        this.scomm = scomm;
     }
 
     public int getScode() {
@@ -79,6 +91,14 @@ public class Salesman implements Serializable {
 
     public void setSales(List<Sales> sales) {
         this.sales = sales;
+    }
+
+    public void addMember(Family member){
+        if(members == null){
+            members = new ArrayList();
+        }
+        members.add(member);
+        member.setSalesman(this);
     }
     
     @Override

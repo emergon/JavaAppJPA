@@ -1,12 +1,18 @@
 package emergon;
 
 import emergon.entity.Customer;
+import emergon.entity.Family;
+import emergon.entity.FamilyType;
 import emergon.entity.Product;
+import emergon.entity.Salesman;
+import java.time.LocalDate;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 public class MainClass {
 
@@ -34,8 +40,70 @@ public class MainClass {
         updateCustomer(c);
         System.out.println("Customer after update: "+c);
          */
+ 
+//        Salesman s = getSalesmanWithFamily("Dimou");
+//        for(Family m: s.getMembers()){
+//            System.out.println(m);
+//        }
+
+        //deleteSalesman();
+        createSalesmanWithFamily();
         closeEmf();
 
+    }
+    
+    
+    
+    private static void deleteSalesman(){
+        openEntityManager();
+        Query query = em.createNativeQuery("Select * from salesman where sname = ?", Salesman.class);
+        query.setParameter(1, "Vasileiou");
+        Salesman politis = (Salesman)query.getSingleResult();
+        em.getTransaction().begin();
+        em.remove(politis);
+        em.getTransaction().commit();
+        closeEntityManager();
+    }
+    
+    private static void createSalesmanWithFamily(){
+        Salesman politis = new Salesman("Mary", "Thessaloniki", 0.15);
+        Family member1 = new Family("Peter", FamilyType.FATHER, LocalDate.now());
+        politis.addMember(member1);
+        openEntityManager();
+        em.getTransaction().begin();
+        em.persist(politis);
+        em.getTransaction().commit();
+        closeEntityManager();
+    }
+    
+    private static Salesman getSalesmanWithFamily(String name){
+        openEntityManager();
+        TypedQuery<Salesman> query = em.createNamedQuery("Salesman.findSalesmanByNameWithFamily", Salesman.class);
+        query.setParameter("onoma", name);
+        Salesman s;
+        try{
+            s = query.getSingleResult();
+        }catch(NoResultException nre){
+            System.out.println("*******NoResultException******");
+            System.out.println(nre.getLocalizedMessage());
+            s = null;
+        } finally{
+            closeEntityManager();
+        }
+        return s;
+    }
+    
+    private static Salesman getSalesmanByName(String name){
+        openEntityManager();
+        TypedQuery<Salesman> query = em.createNamedQuery("Salesman.findByName", Salesman.class);
+        query.setParameter("onoma", name);
+        List<Salesman> list = query.getResultList();
+        closeEntityManager();
+        if(list.size()>0){
+            return list.get(0);
+        }else{
+            return null;
+        }
     }
 
     private static void deleteProduct(Product p) {

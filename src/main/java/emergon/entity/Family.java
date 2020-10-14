@@ -3,6 +3,8 @@ package emergon.entity;
 import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -15,13 +17,20 @@ public class Family implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)//DB will create the primary key(auto increment)
     private int fid;
     private String fname;
-    private String frelationship;
+    @Enumerated(EnumType.STRING)
+    private FamilyType frelationship;
     private LocalDate dob;
     @ManyToOne
     @JoinColumn(name = "salesman")//owning side
     private Salesman salesman;
     
     public Family() {
+    }
+
+    public Family(String fname, FamilyType frelationship, LocalDate dob) {
+        this.fname = fname;
+        this.frelationship = frelationship;
+        this.dob = dob;
     }
 
     public int getFid() {
@@ -40,11 +49,11 @@ public class Family implements Serializable{
         this.fname = fname;
     }
 
-    public String getFrelationship() {
+    public FamilyType getFrelationship() {
         return frelationship;
     }
 
-    public void setFrelationship(String frelationship) {
+    public void setFrelationship(FamilyType frelationship) {
         this.frelationship = frelationship;
     }
 
