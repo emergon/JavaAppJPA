@@ -7,7 +7,9 @@ package emergon.entity;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -23,18 +25,19 @@ public class Sales implements Serializable {
     
     @Id//Primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)//DB will create the primary key(auto increment)
+    @Column(name = "scode" , columnDefinition = "int")
     private int scode;
     private int quant;
     private double cost;
     private LocalDate sdate;
     @ManyToOne
-    @JoinColumn(name = "smcode")
+    @JoinColumn(name = "smcode", columnDefinition = "int", foreignKey = @ForeignKey(name = "salesman_fk"))
     private Salesman salesman;
     @ManyToOne
-    @JoinColumn(name = "ccode")
+    @JoinColumn(name = "ccode", columnDefinition = "int", foreignKey = @ForeignKey(name = "customer_fk"))
     private Customer customer;
     @ManyToOne
-    @JoinColumn(name = "pcode")
+    @JoinColumn(name = "pcode", columnDefinition = "int", foreignKey = @ForeignKey(name = "customer_fk"))
     private Product product;
     
     public Sales() {

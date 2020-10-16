@@ -6,34 +6,55 @@
 package emergon.entity;
 
 import java.io.Serializable;
-import java.util.List;
+import javax.persistence.Basic;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
 
 /**
  *
  * @author user
  */
 @Entity
-public class Customer implements Serializable{
-    @Id//Primary key
-    @GeneratedValue(strategy = GenerationType.IDENTITY)//DB will create the primary key(auto increment)
-    private int ccode;
+@Table(name = "customer")
+@NamedQueries({
+    @NamedQuery(name = "Customer.findAll", query = "SELECT c FROM Customer c")
+    , @NamedQuery(name = "Customer.findByCcode", query = "SELECT c FROM Customer c WHERE c.ccode = :ccode")
+    , @NamedQuery(name = "Customer.findByCname", query = "SELECT c FROM Customer c WHERE c.cname = :cname")})
+public class Customer implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "ccode", columnDefinition = "int")
+    private Integer ccode;
+    @Basic(optional = false)
+    @Column(name = "cname")
     private String cname;
-    @OneToMany(mappedBy = "customer")
-    private List<Sales> sales;
-    
+
     public Customer() {
     }
 
-    public int getCcode() {
+    public Customer(Integer ccode) {
+        this.ccode = ccode;
+    }
+
+    public Customer(Integer ccode, String cname) {
+        this.ccode = ccode;
+        this.cname = cname;
+    }
+
+    public Integer getCcode() {
         return ccode;
     }
 
-    public void setCcode(int ccode) {
+    public void setCcode(Integer ccode) {
         this.ccode = ccode;
     }
 
@@ -45,18 +66,29 @@ public class Customer implements Serializable{
         this.cname = cname;
     }
 
-    public List<Sales> getSales() {
-        return sales;
+    @Override
+    public int hashCode() {
+        int hash = 0;
+        hash += (ccode != null ? ccode.hashCode() : 0);
+        return hash;
     }
 
-    public void setSales(List<Sales> sales) {
-        this.sales = sales;
+    @Override
+    public boolean equals(Object object) {
+        // TODO: Warning - this method won't work in the case the id fields are not set
+        if (!(object instanceof Customer)) {
+            return false;
+        }
+        Customer other = (Customer) object;
+        if ((this.ccode == null && other.ccode != null) || (this.ccode != null && !this.ccode.equals(other.ccode))) {
+            return false;
+        }
+        return true;
     }
 
     @Override
     public String toString() {
-        return "Customer{" + "ccode=" + ccode + ", cname=" + cname + '}';
+        return "emergon.entity.Customer[ ccode=" + ccode + " ]";
     }
-    
     
 }

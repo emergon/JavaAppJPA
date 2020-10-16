@@ -9,25 +9,32 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 @NamedQueries(value = {
     @NamedQuery(name = "Salesman.findByName", query = "SELECT s FROM Salesman s WHERE s.sname = :onoma"),
     @NamedQuery(name = "Salesman.findSalesmanByNameWithFamily", query = "SELECT s FROM Salesman s JOIN FETCH s.members m WHERE s.sname = :onoma")
 })
 @Entity
+@Table(name = "salesman")
 public class Salesman implements Serializable {
 
     @Id//Primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int scode;
+    @Column(name = "scode", columnDefinition = "int")
+    private Integer scode;
     private String sname;
     private String scity;
     private double scomm;
@@ -35,6 +42,12 @@ public class Salesman implements Serializable {
     private List<Family> members;
     @OneToMany(mappedBy = "salesman", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Sales> sales;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "salesman_store",
+            joinColumns = {@JoinColumn(name = "scode", foreignKey = @ForeignKey(name = "salesman_fk"))},
+            inverseJoinColumns = {@JoinColumn(name = "sid")}
+    )
+    private List<Store> stores;
 
     public Salesman() {
     }
@@ -45,11 +58,11 @@ public class Salesman implements Serializable {
         this.scomm = scomm;
     }
 
-    public int getScode() {
+    public Integer getScode() {
         return scode;
     }
 
-    public void setScode(int scode) {
+    public void setScode(Integer scode) {
         this.scode = scode;
     }
 

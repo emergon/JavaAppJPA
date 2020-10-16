@@ -47,9 +47,23 @@ public class MainClass {
 //        }
 
         //deleteSalesman();
+        
+        
+        
+        
         createSalesmanWithFamily();
         closeEmf();
 
+        
+    }
+    
+    private static Family getFamilyMemberWithSalesman(){
+        openEntityManager();
+        Family member = em.find(Family.class, 8);
+        System.out.println(member);
+        System.out.println(member.getSalesman());
+        closeEntityManager();
+        return member;
     }
     
     
